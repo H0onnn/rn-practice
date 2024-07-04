@@ -1,17 +1,34 @@
 import { useState } from "react";
-import { Button, Text, View, TextInput, StyleSheet } from "react-native";
+import {
+  Button,
+  Text,
+  View,
+  TextInput,
+  StyleSheet,
+  FlatList,
+} from "react-native";
+
+type Goal = {
+  text: string;
+  id: string;
+};
 
 export default function Index() {
   const [value, setValue] = useState("");
-  const [goals, setGoals] = useState<string[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
 
   const handleInputChange = (text: string) => {
     setValue(text);
   };
 
   const handleAddGoal = () => {
-    setGoals([...goals, value]);
-    setValue("");
+    setGoals([
+      ...goals,
+      {
+        text: value,
+        id: Math.random().toString(),
+      },
+    ]);
   };
 
   return (
@@ -26,11 +43,17 @@ export default function Index() {
       </View>
 
       <View style={styles.goalsContainer}>
-        {goals.map((goal, index) => (
-          <View key={index} style={styles.goalItem}>
-            <Text style={styles.goalText}>{goal}</Text>
-          </View>
-        ))}
+        <FlatList
+          data={goals}
+          renderItem={(itemData) => {
+            return (
+              <View style={styles.goalItem}>
+                <Text style={styles.goalText}>{itemData.item.text}</Text>
+              </View>
+            );
+          }}
+          keyExtractor={(item) => item.id}
+        />
       </View>
     </View>
   );
